@@ -1,0 +1,62 @@
+cff-version: 1.2.0
+message: "If you use this sandbox or the CIC-YNU-IoTMal dataset in your work, please cite the paper below."
+type: software
+title: "CIC-YNU-IoTMal-Sandbox"
+abstract: "Dynamic malware analysis sandbox for IoT binaries. Developed as part of the CIC-YNU-IoTMal Dataset 2026 research."
+url: "https://www.unb.ca/cic/datasets/ynu-iot-2026.html"
+repository-code: "https://github.com/UNBCIC/CIC-YNU-IoTMal-Sandbox"
+license: Apache-2.0
+date-released: 2026-03-22
+authors:
+  - family-names: Dadkhah
+    given-names: S.
+  - family-names: Okey
+    given-names: O. D.
+  - family-names: Maret
+    given-names: S. A.
+  - family-names: Lo
+    given-names: Y.
+  - family-names: Firouzia
+    given-names: A.
+  - family-names: Kuki
+    given-names: R.
+  - family-names: Sasaki
+    given-names: T.
+  - family-names: Yoshioka
+    given-names: K.
+  - family-names: Ban
+    given-names: T.
+  - family-names: Ozawa
+    given-names: S.
+  - family-names: Ghorbani
+    given-names: A. A.
+preferred-citation:
+  type: article
+  title: "CIC-YNU-IoTMal: A Comprehensive Multilayer Dataset for Static and Dynamic Analysis of IoT Malware Behavior"
+  authors:
+    - family-names: Dadkhah
+      given-names: S.
+    - family-names: Okey
+      given-names: O. D.
+    - family-names: Maret
+      given-names: S. A.
+    - family-names: Lo
+      given-names: Y.
+    - family-names: Firouzia
+      given-names: A.
+    - family-names: Kuki
+      given-names: R.
+    - family-names: Sasaki
+      given-names: T.
+    - family-names: Yoshioka
+      given-names: K.
+    - family-names: Ban
+      given-names: T.
+    - family-names: Ozawa
+      given-names: S.
+    - family-names: Ghorbani
+      given-names: A. A.
+  journal: "Expert Systems with Applications"
+  year: 2026
+  url: "https://www.unb.ca/cic/datasets/ynu-iot-2026.html"
+  notes: "submitted"

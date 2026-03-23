@@ -1,0 +1,109 @@
+version: '3.5'
+
+# -------------------------------------------------------
+# IoT-CIC-Sandbox — full-stack deployment
+#
+# Starts MongoDB, the sandbox-manager, and one or more
+# sandbox-workers on a shared internal network.
+#
+# Prerequisites:
+#   1. Copy .env.example to .env and fill in all values.
+#   2. Update the malware volume mount below (search for
+#      /path/to/your/malware).
+#   3. docker compose up --build
+# -------------------------------------------------------
+
+services:
+
+  # ── MongoDB ─────────────────────────────────────────
+  mongo-db:
+    image: mongo
+    restart: always
+    container_name: mongo-db
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD}
+    volumes:
+      - ./data/mongo/:/data/db/
+    networks:
+      - dbnet
+
+  # ── Sandbox Manager ─────────────────────────────────
+  sandbox-manager:
+    build: ./sandbox-manager
+    image: sandbox-manager
+    restart: on-failure
+    ports:
+      - '${MANAGER_PORT:-8011}:8011'
+    environment:
+      PORT: 8011
+      APP_BASE_URL: "/api/v1/sandbox-manager"
+      MONGO_HOST: mongo-db:27017
+      MONGO_USERNAME: ${MONGO_USERNAME}
+      MONGO_PASSWORD: ${MONGO_PASSWORD}
+      MONGO_DB: sandbox
+      MALWARE_DIRECTORY: /malware
+      OUTPUT_DIR: ./output/
+      UPLOAD_DIR: ./uploads/
+    volumes:
+      # Mount the directory containing malware samples (read-only).
+      # Update the host path below before running.
+      # - /path/to/your/malware:/malware:ro
+      - ./malware:/malware:ro
+    networks:
+      dbnet:
+      sandboxnet:
+        ipv4_address: 192.168.60.10
+    depends_on:
+      - mongo-db
+
+  # ── Sandbox Worker(s) ───────────────────────────────
+  # Each worker auto-detects the architecture of each binary at runtime.
+  # To scale, duplicate a worker block and assign a unique APP_NAME,
+  # host port, and IP address (must be on the 192.168.40.0/24 subnet).
+  # QEMU uses a tap interface bridged to the worker container's network,
+  # so each worker needs a fixed, unique IP.
+
+  sandbox-worker-1:
+    build: ./sandbox-worker
+    image: sandbox-worker
+    privileged: true
+    restart: on-failure
+    environment:
+      PORT: 8011
+      APP_BASE_URL: "/api/v1/sandbox-worker"
+      APP_NAME: sandbox-worker-1
+      SANDBOX_MANAGER_URI: http://sandbox-manager:8011/api/v1/sandbox-manager
+      ANALYSIS_DURATION: ${ANALYSIS_DURATION:-30}
+      POST_ANALYSIS_WAIT: ${POST_ANALYSIS_WAIT:-30}
+      ALLOW_VM_INTERNET: ${ALLOW_VM_INTERNET:-true}
+    networks:
+      sandboxnet:
+        ipv4_address: 192.168.60.2
+
+  # sandbox-worker-2:
+  #   build: ./sandbox-worker
+  #   image: sandbox-worker
+  #   privileged: true
+  #   restart: on-failure
+  #   ports:
+  #     - '8013:8011'
+  #   environment:
+  #     PORT: 8011
+  #     APP_BASE_URL: "/api/v1/sandbox-worker"
+  #     APP_NAME: sandbox-worker-2
+  #     SANDBOX_MANAGER_URI: http://sandbox-manager:8011/api/v1/sandbox-manager
+  #     ANALYSIS_DURATION: ${ANALYSIS_DURATION:-30}
+  #     POST_ANALYSIS_WAIT: ${POST_ANALYSIS_WAIT:-30}
+  #   networks:
+  #     sandboxnet:
+  #       ipv4_address: 192.168.60.3
+
+networks:
+  dbnet:
+  sandboxnet:
+    ipam:
+      driver: default
+      config:
+        - subnet: "192.168.60.0/24"
+          gateway: "192.168.60.1"
