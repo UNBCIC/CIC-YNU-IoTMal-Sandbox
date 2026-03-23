@@ -1,0 +1,15 @@
+# Environment
+.env
+
+# Individual service compose files (top-level docker-compose.yml is the deployment config)
+sandbox-manager/docker-compose.yml
+sandbox-worker/docker-compose.yml
+
+# Runtime data
+data/
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/

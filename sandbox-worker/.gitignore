@@ -1,0 +1,23 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.venv/
+venv/
+
+# IDE
+.idea/
+.vscode/
+
+# Runtime data
+data/
+temp/
+
+# Environment
+.env
+
+# Extracted images (keep only zipped archives)
+ARM/image/
+MIPS/image/
+MIPSEL/image/
+x86/image/
